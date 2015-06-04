@@ -1,2 +1,2 @@
 # TheAnalyticsEdgeBerkeleyX
-The Analytics Edge course. EdX. BerkeleyX.
+The Analytics Edge course. EdX. MITx.
