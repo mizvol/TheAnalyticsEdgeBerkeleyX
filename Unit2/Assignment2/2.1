@@ -1,0 +1,10 @@
+climate = read.csv("climate_change.csv")
+train = subset(climate, climate$Year <= 2006)
+test = subset(climate, climate$Year > 2006)
+mainModel = lm(Temp ~. -Year -Month, data = train)
+
+stepLM = step(mainModel)
+predictedTemp = predict(stepLM, newdata = test)
+SSE = sum((predictedTemp - test$Temp)^2)
+SST = sum((mean(train$Temp) - test$Temp)^2)
+R2 = 1 - SSE/SST

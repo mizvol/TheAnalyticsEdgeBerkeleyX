@@ -1,0 +1,32 @@
+FluTrain = read.csv("FluTrain.csv")
+attach(FluTrain)
+levels(factor(Week[which.max(ILI)]))
+
+#alternatives
+subset(FluTrain, ILI == max(ILI)) 
+which.max(FluTrain$Queries)
+
+hist(ILI)
+plot(log(ILI), Queries)
+
+FluTrand1 = lm(log(ILI) ~ Queries, data = FluTrain)
+cor(log(ILI), Queries)
+
+PredTest1 = predict(FluTrand1, newdata = FluTest)
+PredTest1 = exp(predict(FluTrand1, newdata = FluTest))
+which(FluTest$Week == "2012-03-11 - 2012-03-17")
+PredTest1[11]
+
+SSE = sum((PredTest1 - FluTest$ILI)^2)
+RMSE = sqrt(SSE/nrow(FluTest))
+
+install.packages("zoo")
+library(zoo)
+ILILag2 = lag(zoo(FluTrain$ILI), -2, na.pad=TRUE)
+FluTrain$ILILag2 = coredata(ILILag2)
+FluTrend2 = lm(log(ILI) ~ Queries + log(ILILag2), data = FluTrain)
+FluTest$ILILag[1] = FluTrain$ILI[416]
+FluTest$ILILag[2] = FluTrain$ILI[417]
+PredTest2 = exp(predict(FluTrend2, newdata=FluTest))
+SSE2 = sum((FluTest$ILI - PredTest2)^2)
+RMSE = sqrt(SSE2/nrow(FluTest))
